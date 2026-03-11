@@ -33,8 +33,8 @@
                 </svg>
             </div>
             <div>
-                <p class="font-semibold text-gray-900">Budi Santoso</p>
-                <p class="text-sm text-gray-600">Saldo: Rp 250.000</p>
+                <p class="font-semibold text-gray-900">{{ auth()->user()->name }}</p>
+                <p class="text-sm text-gray-600">Saldo: Rp {{ number_format(auth()->user()->wallet->balance ?? 0, 0, ',', '.') }}</p>
             </div>
         </div>
         <div class="space-y-2">
@@ -44,9 +44,12 @@
             <button class="w-full px-4 py-3 hover:bg-gray-100 rounded-lg text-left text-gray-700 font-medium transition">
                 💬 Bantuan
             </button>
-            <button class="w-full px-4 py-3 hover:bg-red-50 rounded-lg text-left text-red-600 font-medium transition">
-                🚪 Logout
-            </button>
+            <form action="{{ route('auth.logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="w-full px-4 py-3 hover:bg-red-50 rounded-lg text-left text-red-600 font-medium transition">
+                    🚪 Logout
+                </button>
+            </form>
         </div>
     </div>
 </div>

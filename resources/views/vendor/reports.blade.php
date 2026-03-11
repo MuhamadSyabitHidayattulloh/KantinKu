@@ -32,10 +32,13 @@
                 Pengaturan
             </x-layout.sidebar-item>
             
-            <x-layout.sidebar-item url="#" 
-                icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>'>
-                Logout
-            </x-layout.sidebar-item>
+            <form action="{{ route('auth.logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    <span>Logout</span>
+                </button>
+            </form>
         </x-layout.sidebar-group>
     </x-layout.sidebar>
 
@@ -60,19 +63,17 @@
             <!-- Summary Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <x-cards.stat-card 
-                    title="Total Penjualan Bulan Ini"
-                    value="Rp 4.8M"
+                    title="Total Pendapatan"
+                    value="Rp {{ number_format($totalRevenue, 0, ',', '.') }}"
                     icon='<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
                     color="accent"
-                    :trend="['type' => 'increase', 'percentage' => 12]"
                 />
                 
                 <x-cards.stat-card 
                     title="Total Pesanan"
-                    value="156"
+                    value="{{ number_format($totalOrders) }}"
                     icon='<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>'
                     color="primary"
-                    :trend="['type' => 'increase', 'percentage' => 8]"
                 />
                 
 
@@ -102,37 +103,23 @@
                             <x-tables.th>Jumlah Pesanan</x-tables.th>
                             <x-tables.th>Total Penjualan</x-tables.th>
                             <x-tables.th>Rata-rata Pesanan</x-tables.th>
-                            <x-tables.th>Trend</x-tables.th>
                         </x-tables.tr>
                     </x-tables.thead>
                     <x-tables.tbody>
-                        <x-tables.tr>
-                            <x-tables.td class="font-semibold text-gray-900">11 Mar 2025</x-tables.td>
-                            <x-tables.td>23</x-tables.td>
-                            <x-tables.td class="font-semibold text-gray-800">Rp 350.000</x-tables.td>
-                            <x-tables.td>Rp 15.2K</x-tables.td>
-                            <x-tables.td>
-                                <span class="text-green-600 text-sm font-semibold">↑ 12%</span>
-                            </x-tables.td>
-                        </x-tables.tr>
-                        <x-tables.tr>
-                            <x-tables.td class="font-semibold text-gray-900">10 Mar 2025</x-tables.td>
-                            <x-tables.td>21</x-tables.td>
-                            <x-tables.td class="font-semibold text-gray-800">Rp 320.000</x-tables.td>
-                            <x-tables.td>Rp 15.2K</x-tables.td>
-                            <x-tables.td>
-                                <span class="text-green-600 text-sm font-semibold">↑ 5%</span>
-                            </x-tables.td>
-                        </x-tables.tr>
-                        <x-tables.tr>
-                            <x-tables.td class="font-semibold text-gray-900">09 Mar 2025</x-tables.td>
-                            <x-tables.td>18</x-tables.td>
-                            <x-tables.td class="font-semibold text-gray-800">Rp 280.000</x-tables.td>
-                            <x-tables.td>Rp 15.6K</x-tables.td>
-                            <x-tables.td>
-                                <span class="text-red-600 text-sm font-semibold">↓ 3%</span>
-                            </x-tables.td>
-                        </x-tables.tr>
+                        @forelse ($ordersByDate as $data)
+                            <x-tables.tr>
+                                <x-tables.td class="font-semibold text-gray-900">{{ \Carbon\Carbon::parse($data->date)->format('d M Y') }}</x-tables.td>
+                                <x-tables.td>{{ $data->count }}</x-tables.td>
+                                <x-tables.td class="font-semibold text-gray-800">Rp {{ number_format($data->revenue, 0, ',', '.') }}</x-tables.td>
+                                <x-tables.td>Rp {{ number_format($data->revenue / max($data->count, 1), 0, ',', '.') }}</x-tables.td>
+                            </x-tables.tr>
+                        @empty
+                            <x-tables.tr>
+                                <x-tables.td colspan="4" class="text-center py-4">
+                                    <p class="text-gray-600">Belum ada data pesanan</p>
+                                </x-tables.td>
+                            </x-tables.tr>
+                        @endforelse
                     </x-tables.tbody>
                 </x-tables.table>
             </x-cards.card>

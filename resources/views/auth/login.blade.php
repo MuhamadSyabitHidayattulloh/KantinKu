@@ -13,23 +13,39 @@
 
 <!-- Login Form -->
 <div class="p-8">
-    <form class="space-y-5">
+    <form action="{{ route('auth.login') }}" method="POST" class="space-y-5">
+        @csrf
+        
+        @if ($errors->any())
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                @foreach ($errors->all() as $error)
+                    <p class="text-sm text-red-600">{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+
         <!-- Email Input -->
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-            <input type="email" placeholder="nama@example.com" class="input-field w-full px-4 py-3" required>
+            <input type="email" name="email" placeholder="nama@example.com" class="input-field w-full px-4 py-3 @error('email') border-red-500 @enderror" value="{{ old('email') }}" required>
+            @error('email')
+                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         <!-- Password Input -->
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-            <input type="password" placeholder="••••••••" class="input-field w-full px-4 py-3" required>
+            <input type="password" name="password" placeholder="••••••••" class="input-field w-full px-4 py-3 @error('password') border-red-500 @enderror" required>
+            @error('password')
+                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         <!-- Remember Me & Forgot Password -->
         <div class="flex justify-between items-center text-sm">
             <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" class="w-4 h-4 rounded border-gray-300">
+                <input type="checkbox" name="remember" class="w-4 h-4 rounded border-gray-300">
                 <span class="text-gray-600">Ingat saya</span>
             </label>
             <a href="#" class="text-primary-700 hover:text-primary-800 font-medium">Lupa password?</a>
@@ -59,6 +75,10 @@
         </button>
     </form>
 </div>
+@endsection
+
+@section('auth-footer')
+Belum punya akun? <a href="/register" class="text-primary-700 font-semibold hover:underline">Daftar di sini</a>
 @endsection
 
 @section('auth-footer')

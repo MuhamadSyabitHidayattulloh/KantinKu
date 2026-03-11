@@ -37,10 +37,13 @@
                 Pengaturan
             </x-layout.sidebar-item>
             
-            <x-layout.sidebar-item url="#" 
-                icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>'>
-                Logout
-            </x-layout.sidebar-item>
+            <form action="{{ route('auth.logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    <span>Logout</span>
+                </button>
+            </form>
         </x-layout.sidebar-group>
     </x-layout.sidebar>
 
@@ -49,10 +52,10 @@
         <x-layout.page-header title="Kelola User">
             <div class="flex gap-3">
                 <input type="text" placeholder="Cari user..." class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600 w-64">
-                <x-buttons.btn variant="accent" size="sm">
+                <a href="/admin/users/create" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-700 text-white font-semibold rounded-lg hover:bg-primary-800">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     Tambah User
-                </x-buttons.btn>
+                </a>
             </div>
         </x-layout.page-header>
 
@@ -61,7 +64,7 @@
             <x-cards.card>
                 <div class="pb-4 border-b border-gray-200 mb-4">
                     <h3 class="font-poppins text-lg font-bold text-gray-800">Daftar User</h3>
-                    <p class="text-sm text-gray-500 mt-1">Total 1,234 user terdaftar</p>
+                    <p class="text-sm text-gray-500 mt-1">Total {{ count($users) }} user terdaftar</p>
                 </div>
                 
                 <x-tables.table>
@@ -69,68 +72,57 @@
                         <x-tables.tr>
                             <x-tables.th>Nama</x-tables.th>
                             <x-tables.th>Email</x-tables.th>
-                            <x-tables.th>Nomor Telepon</x-tables.th>
+                            <x-tables.th>Role</x-tables.th>
+                            <x-tables.th>Saldo</x-tables.th>
                             <x-tables.th>Status</x-tables.th>
                             <x-tables.th>Terdaftar</x-tables.th>
                             <x-tables.th>Aksi</x-tables.th>
                         </x-tables.tr>
                     </x-tables.thead>
                     <x-tables.tbody>
-                        <x-tables.tr>
-                            <x-tables.td class="font-semibold text-gray-900">Budi Santoso</x-tables.td>
-                            <x-tables.td>budi@example.com</x-tables.td>
-                            <x-tables.td>081234567890</x-tables.td>
-                            <x-tables.td>
-                                <x-badges.badge variant="success">Aktif</x-badges.badge>
-                            </x-tables.td>
-                            <x-tables.td class="text-sm text-gray-600">15 Maret 2025</x-tables.td>
-                            <x-tables.td>
-                                <div class="flex gap-2">
-                                    <button class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus</button>
-                                </div>
-                            </x-tables.td>
-                        </x-tables.tr>
-                        <x-tables.tr>
-                            <x-tables.td class="font-semibold text-gray-900">Siti Nur Azizah</x-tables.td>
-                            <x-tables.td>siti@example.com</x-tables.td>
-                            <x-tables.td>081298765432</x-tables.td>
-                            <x-tables.td>
-                                <x-badges.badge variant="success">Aktif</x-badges.badge>
-                            </x-tables.td>
-                            <x-tables.td class="text-sm text-gray-600">20 Maret 2025</x-tables.td>
-                            <x-tables.td>
-                                <div class="flex gap-2">
-                                    <button class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus</button>
-                                </div>
-                            </x-tables.td>
-                        </x-tables.tr>
-                        <x-tables.tr>
-                            <x-tables.td class="font-semibold text-gray-900">Ahmad Wijaya</x-tables.td>
-                            <x-tables.td>ahmad@example.com</x-tables.td>
-                            <x-tables.td>085567890123</x-tables.td>
-                            <x-tables.td>
-                                <x-badges.badge variant="success">Aktif</x-badges.badge>
-                            </x-tables.td>
-                            <x-tables.td class="text-sm text-gray-600">22 Maret 2025</x-tables.td>
-                            <x-tables.td>
-                                <div class="flex gap-2">
-                                    <button class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus</button>
-                                </div>
-                            </x-tables.td>
-                        </x-tables.tr>
+                        @forelse ($users as $user)
+                            <x-tables.tr>
+                                <x-tables.td class="font-semibold text-gray-900">{{ $user->name }}</x-tables.td>
+                                <x-tables.td>{{ $user->email }}</x-tables.td>
+                                <x-tables.td>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full {{ $user->role === 'user' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                        {{ ucfirst($user->role) }}
+                                    </span>
+                                </x-tables.td>
+                                <x-tables.td>Rp {{ number_format($user->wallet->balance ?? 0, 0, ',', '.') }}</x-tables.td>
+                                <x-tables.td>
+                                    <x-badges.badge variant="success">Aktif</x-badges.badge>
+                                </x-tables.td>
+                                <x-tables.td class="text-sm text-gray-600">{{ $user->created_at->format('d M Y') }}</x-tables.td>
+                                <x-tables.td>
+                                    <div class="flex gap-2">
+                                        <a href="/admin/users/{{ $user->id }}/edit" class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</a>
+                                        <form action="/admin/users/{{ $user->id }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium" onclick="return confirm('Yakin ingin menghapus user ini?')">Hapus</button>
+                                        </form>
+                                    </div>
+                                </x-tables.td>
+                            </x-tables.tr>
+                        @empty
+                            <x-tables.tr>
+                                <x-tables.td colspan="7" class="text-center py-8">
+                                    <p class="text-gray-600">Belum ada user</p>
+                                </x-tables.td>
+                            </x-tables.tr>
+                        @endforelse
                     </x-tables.tbody>
                 </x-tables.table>
 
                 <!-- Pagination -->
                 <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
-                    <p class="text-sm text-gray-600">Menampilkan 1-10 dari 1,234</p>
-                    <div class="flex gap-2">
-                        <x-buttons.btn variant="secondary" size="sm">Sebelumnya</x-buttons.btn>
-                        <x-buttons.btn variant="secondary" size="sm">Selanjutnya</x-buttons.btn>
-                    </div>
+                    <p class="text-sm text-gray-600">Menampilkan {{ count($users) }} user</p>
+                    @if ($users instanceof \Illuminate\Pagination\Paginator)
+                        <div class="flex gap-2">
+                            {{ $users->links() }}
+                        </div>
+                    @endif
                 </div>
             </x-cards.card>
         </div>

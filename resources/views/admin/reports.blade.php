@@ -37,10 +37,13 @@
                 Pengaturan
             </x-layout.sidebar-item>
             
-            <x-layout.sidebar-item url="#" 
-                icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>'>
-                Logout
-            </x-layout.sidebar-item>
+            <form action="{{ route('auth.logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    <span>Logout</span>
+                </button>
+            </form>
         </x-layout.sidebar-group>
     </x-layout.sidebar>
 
@@ -64,34 +67,31 @@
             <!-- Summary Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <x-cards.stat-card 
-                    title="Total Pesanan Bulan Ini"
-                    value="1,234"
+                    title="Total Pesanan"
+                    value="{{ number_format($totalOrders) }}"
                     icon='<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>'
                     color="primary"
-                    :trend="['type' => 'increase', 'percentage' => 12]"
                 />
                 
                 <x-cards.stat-card 
                     title="Total Pendapatan"
-                    value="Rp 125.5M"
+                    value="Rp {{ number_format($totalRevenue, 0, ',', '.') }}"
                     icon='<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
                     color="accent"
-                    :trend="['type' => 'increase', 'percentage' => 8]"
                 />
                 
                 <x-cards.stat-card 
-                    title="Rata-rata Nilai Pesanan"
-                    value="Rp 102K"
+                    title="Total Users"
+                    value="{{ number_format($totalUsers) }}"
                     icon='<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
                     color="green"
                 />
                 
                 <x-cards.stat-card 
-                    title="Vendor Aktif"
-                    value="129"
+                    title="Total Vendor"
+                    value="{{ number_format($totalVendors) }}"
                     icon='<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292m0 0a4.004 4.004 0 014 4.354m0 0a4 4 0 11-8 0m6 2a1 1 0 100-2 1 1 0 000 2z"/></svg>'
                     color="blue"
-                    :trend="['type' => 'increase', 'percentage' => 5]"
                 />
             </div>
 
@@ -117,27 +117,17 @@
                     </div>
                     
                     <div class="space-y-4">
-                        <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-800">Warung Nasi Jaya</p>
-                                <p class="text-xs text-gray-500">567 pesanan</p>
+                        @forelse ($topVendors as $vendor)
+                            <div class="flex items-center justify-between {{ !$loop->last ? 'pb-3 border-b border-gray-100' : '' }}">
+                                <div class="flex-1">
+                                    <p class="font-medium text-gray-800">{{ $vendor->name }}</p>
+                                    <p class="text-xs text-gray-500">{{ $vendor->products_count ?? 0 }} produk</p>
+                                </div>
+                                <span class="text-primary-700 text-sm font-semibold">Rp {{ number_format($vendor->total_sales ?? 0, 0, ',', '.') }}</span>
                             </div>
-                            <span class="text-primary-700 text-sm font-semibold">Rp 28.5M</span>
-                        </div>
-                        <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-800">Bakso Enak</p>
-                                <p class="text-xs text-gray-500">432 pesanan</p>
-                            </div>
-                            <span class="text-primary-700 text-sm font-semibold">Rp 19.2M</span>
-                        </div>
-                        <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-800">Minuman Segar</p>
-                                <p class="text-xs text-gray-500">298 pesanan</p>
-                            </div>
-                            <span class="text-primary-700 text-sm font-semibold">Rp 12.3M</span>
-                        </div>
+                        @empty
+                            <p class="text-gray-600 text-sm">Belum ada vendor</p>
+                        @endforelse
                     </div>
                 </x-cards.card>
             </div>
@@ -156,37 +146,23 @@
                                 <x-tables.th>Jumlah Pesanan</x-tables.th>
                                 <x-tables.th>Total Penjualan</x-tables.th>
                                 <x-tables.th>Rata-rata</x-tables.th>
-                                <x-tables.th>Trend</x-tables.th>
                             </x-tables.tr>
                         </x-tables.thead>
                         <x-tables.tbody>
-                            <x-tables.tr>
-                                <x-tables.td class="font-semibold text-gray-900">11 Mar 2025</x-tables.td>
-                                <x-tables.td>145</x-tables.td>
-                                <x-tables.td class="font-semibold text-gray-800">Rp 14.8M</x-tables.td>
-                                <x-tables.td>Rp 102K</x-tables.td>
-                                <x-tables.td>
-                                    <span class="text-green-600 text-sm font-semibold">↑ 12%</span>
-                                </x-tables.td>
-                            </x-tables.tr>
-                            <x-tables.tr>
-                                <x-tables.td class="font-semibold text-gray-900">10 Mar 2025</x-tables.td>
-                                <x-tables.td>132</x-tables.td>
-                                <x-tables.td class="font-semibold text-gray-800">Rp 13.2M</x-tables.td>
-                                <x-tables.td>Rp 100K</x-tables.td>
-                                <x-tables.td>
-                                    <span class="text-green-600 text-sm font-semibold">↑ 5%</span>
-                                </x-tables.td>
-                            </x-tables.tr>
-                            <x-tables.tr>
-                                <x-tables.td class="font-semibold text-gray-900">09 Mar 2025</x-tables.td>
-                                <x-tables.td>156</x-tables.td>
-                                <x-tables.td class="font-semibold text-gray-800">Rp 15.9M</x-tables.td>
-                                <x-tables.td>Rp 102K</x-tables.td>
-                                <x-tables.td>
-                                    <span class="text-green-600 text-sm font-semibold">↑ 8%</span>
-                                </x-tables.td>
-                            </x-tables.tr>
+                            @forelse ($ordersByDate as $data)
+                                <x-tables.tr>
+                                    <x-tables.td class="font-semibold text-gray-900">{{ \Carbon\Carbon::parse($data->date)->format('d M Y') }}</x-tables.td>
+                                    <x-tables.td>{{ $data->count }}</x-tables.td>
+                                    <x-tables.td class="font-semibold text-gray-800">Rp {{ number_format($data->revenue, 0, ',', '.') }}</x-tables.td>
+                                    <x-tables.td>Rp {{ number_format($data->revenue / max($data->count, 1), 0, ',', '.') }}</x-tables.td>
+                                </x-tables.tr>
+                            @empty
+                                <x-tables.tr>
+                                    <x-tables.td colspan="4" class="text-center py-4">
+                                        <p class="text-gray-600">Belum ada data pesanan</p>
+                                    </x-tables.td>
+                                </x-tables.tr>
+                            @endforelse
                         </x-tables.tbody>
                     </x-tables.table>
                 </x-cards.card>

@@ -37,10 +37,13 @@
                 Pengaturan
             </x-layout.sidebar-item>
             
-            <x-layout.sidebar-item url="#" 
-                icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>'>
-                Logout
-            </x-layout.sidebar-item>
+            <form action="{{ route('auth.logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    <span>Logout</span>
+                </button>
+            </form>
         </x-layout.sidebar-group>
     </x-layout.sidebar>
 
@@ -49,10 +52,10 @@
         <x-layout.page-header title="Kelola Vendor">
             <div class="flex gap-3">
                 <input type="text" placeholder="Cari vendor..." class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600 w-64">
-                <x-buttons.btn variant="accent" size="sm">
+                <a href="/admin/vendors/create" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-700 text-white font-semibold rounded-lg hover:bg-primary-800">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     Tambah Vendor
-                </x-buttons.btn>
+                </a>
             </div>
         </x-layout.page-header>
 
@@ -61,15 +64,14 @@
             <x-cards.card>
                 <div class="pb-4 border-b border-gray-200 mb-4">
                     <h3 class="font-poppins text-lg font-bold text-gray-800">Daftar Vendor</h3>
-                    <p class="text-sm text-gray-500 mt-1">Total 145 vendor terdaftar</p>
+                    <p class="text-sm text-gray-500 mt-1">Total {{ count($vendors) }} vendor terdaftar</p>
                 </div>
                 
                 <x-tables.table>
                     <x-tables.thead>
                         <x-tables.tr>
-                            <x-tables.th>Nama Toko</x-tables.th>
+                            <x-tables.th>Nama Vendor</x-tables.th>
                             <x-tables.th>Email</x-tables.th>
-                            <x-tables.th>Nomor Telepon</x-tables.th>
                             <x-tables.th>Produk</x-tables.th>
                             <x-tables.th>Status</x-tables.th>
                             <x-tables.th>Terdaftar</x-tables.th>
@@ -77,73 +79,46 @@
                         </x-tables.tr>
                     </x-tables.thead>
                     <x-tables.tbody>
-                        <x-tables.tr>
-                            <x-tables.td>
-                                <div class="font-semibold text-gray-900">Warung Nasi Jaya</div>
-                                <div class="text-xs text-gray-500">Kios A-01</div>
-                            </x-tables.td>
-                            <x-tables.td>nasi.jaya@example.com</x-tables.td>
-                            <x-tables.td>081234567890</x-tables.td>
-                            <x-tables.td class="text-center">8 produk</x-tables.td>
-                            <x-tables.td>
-                                <x-badges.badge variant="success">Aktif</x-badges.badge>
-                            </x-tables.td>
-                            <x-tables.td class="text-sm text-gray-600">10 Maret 2025</x-tables.td>
-                            <x-tables.td>
-                                <div class="flex gap-2">
-                                    <button class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus</button>
-                                </div>
-                            </x-tables.td>
-                        </x-tables.tr>
-                        <x-tables.tr>
-                            <x-tables.td>
-                                <div class="font-semibold text-gray-900">Bakso Enak</div>
-                                <div class="text-xs text-gray-500">Kios B-05</div>
-                            </x-tables.td>
-                            <x-tables.td>bakso.enak@example.com</x-tables.td>
-                            <x-tables.td>081298765432</x-tables.td>
-                            <x-tables.td class="text-center">5 produk</x-tables.td>
-                            <x-tables.td>
-                                <x-badges.badge variant="success">Aktif</x-badges.badge>
-                            </x-tables.td>
-                            <x-tables.td class="text-sm text-gray-600">12 Maret 2025</x-tables.td>
-                            <x-tables.td>
-                                <div class="flex gap-2">
-                                    <button class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus</button>
-                                </div>
-                            </x-tables.td>
-                        </x-tables.tr>
-                        <x-tables.tr>
-                            <x-tables.td>
-                                <div class="font-semibold text-gray-900">Minuman Segar</div>
-                                <div class="text-xs text-gray-500">Kios C-03</div>
-                            </x-tables.td>
-                            <x-tables.td>minuman.segar@example.com</x-tables.td>
-                            <x-tables.td>085567890123</x-tables.td>
-                            <x-tables.td class="text-center">6 produk</x-tables.td>
-                            <x-tables.td>
-                                <x-badges.badge variant="success">Aktif</x-badges.badge>
-                            </x-tables.td>
-                            <x-tables.td class="text-sm text-gray-600">18 Maret 2025</x-tables.td>
-                            <x-tables.td>
-                                <div class="flex gap-2">
-                                    <button class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus</button>
-                                </div>
-                            </x-tables.td>
-                        </x-tables.tr>
+                        @forelse ($vendors as $vendor)
+                            <x-tables.tr>
+                                <x-tables.td>
+                                    <div class="font-semibold text-gray-900">{{ $vendor->name }}</div>
+                                </x-tables.td>
+                                <x-tables.td>{{ $vendor->email }}</x-tables.td>
+                                <x-tables.td class="text-center">{{ count($vendor->products) }} produk</x-tables.td>
+                                <x-tables.td>
+                                    <x-badges.badge variant="success">Aktif</x-badges.badge>
+                                </x-tables.td>
+                                <x-tables.td class="text-sm text-gray-600">{{ $vendor->created_at->format('d M Y') }}</x-tables.td>
+                                <x-tables.td>
+                                    <div class="flex gap-2">
+                                        <a href="/admin/vendors/{{ $vendor->id }}/edit" class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</a>
+                                        <form action="/admin/vendors/{{ $vendor->id }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium" onclick="return confirm('Yakin ingin menghapus vendor ini?')">Hapus</button>
+                                        </form>
+                                    </div>
+                                </x-tables.td>
+                            </x-tables.tr>
+                        @empty
+                            <x-tables.tr>
+                                <x-tables.td colspan="6" class="text-center py-8">
+                                    <p class="text-gray-600">Belum ada vendor</p>
+                                </x-tables.td>
+                            </x-tables.tr>
+                        @endforelse
                     </x-tables.tbody>
                 </x-tables.table>
 
                 <!-- Pagination -->
                 <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
-                    <p class="text-sm text-gray-600">Menampilkan 1-10 dari 145</p>
-                    <div class="flex gap-2">
-                        <x-buttons.btn variant="secondary" size="sm">Sebelumnya</x-buttons.btn>
-                        <x-buttons.btn variant="secondary" size="sm">Selanjutnya</x-buttons.btn>
-                    </div>
+                    <p class="text-sm text-gray-600">Menampilkan {{ count($vendors) }} vendor</p>
+                    @if ($vendors instanceof \Illuminate\Pagination\Paginator)
+                        <div class="flex gap-2">
+                            {{ $vendors->links() }}
+                        </div>
+                    @endif
                 </div>
             </x-cards.card>
         </div>

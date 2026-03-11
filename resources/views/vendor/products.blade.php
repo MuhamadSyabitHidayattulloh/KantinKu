@@ -32,10 +32,13 @@
                 Pengaturan
             </x-layout.sidebar-item>
             
-            <x-layout.sidebar-item url="#" 
-                icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>'>
-                Logout
-            </x-layout.sidebar-item>
+            <form action="{{ route('auth.logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    <span>Logout</span>
+                </button>
+            </form>
         </x-layout.sidebar-group>
     </x-layout.sidebar>
 
@@ -44,10 +47,10 @@
         <x-layout.page-header title="Kelola Produk">
             <div class="flex gap-3">
                 <input type="text" placeholder="Cari produk..." class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600 w-64">
-                <x-buttons.btn variant="accent" size="sm">
+                <a href="/vendor/products/create" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-700 text-white font-semibold rounded-lg hover:bg-primary-800">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     Tambah Produk
-                </x-buttons.btn>
+                </a>
             </div>
         </x-layout.page-header>
 
@@ -56,7 +59,7 @@
             <x-cards.card>
                 <div class="pb-4 border-b border-gray-200 mb-4">
                     <h3 class="font-poppins text-lg font-bold text-gray-800">Daftar Produk</h3>
-                    <p class="text-sm text-gray-500 mt-1">Total 8 produk aktif</p>
+                    <p class="text-sm text-gray-500 mt-1">Total {{ count($products) }} produk</p>
                 </div>
                 
                 <x-tables.table>
@@ -64,109 +67,65 @@
                         <x-tables.tr>
                             <x-tables.th>Gambar</x-tables.th>
                             <x-tables.th>Nama Produk</x-tables.th>
-                            <x-tables.th>Kategori</x-tables.th>
                             <x-tables.th>Harga</x-tables.th>
                             <x-tables.th>Stok</x-tables.th>
-                            <x-tables.th>Terjual</x-tables.th>
                             <x-tables.th>Status</x-tables.th>
                             <x-tables.th>Aksi</x-tables.th>
                         </x-tables.tr>
                     </x-tables.thead>
                     <x-tables.tbody>
-                        <x-tables.tr>
-                            <x-tables.td>
-                                <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-6 h-6 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                </div>
-                            </x-tables.td>
-                            <x-tables.td class="font-semibold text-gray-900">Nasi Goreng Spesial</x-tables.td>
-                            <x-tables.td>Makanan</x-tables.td>
-                            <x-tables.td>Rp 25.000</x-tables.td>
-                            <x-tables.td class="font-medium">45 porsi</x-tables.td>
-                            <x-tables.td>234 porsi</x-tables.td>
-                            <x-tables.td>
-                                <x-badges.badge variant="success">Aktif</x-badges.badge>
-                            </x-tables.td>
-                            <x-tables.td>
-                                <div class="flex gap-2">
-                                    <button class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus</button>
-                                </div>
-                            </x-tables.td>
-                        </x-tables.tr>
-                        <x-tables.tr>
-                            <x-tables.td>
-                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                </div>
-                            </x-tables.td>
-                            <x-tables.td class="font-semibold text-gray-900">Mie Kuah</x-tables.td>
-                            <x-tables.td>Makanan</x-tables.td>
-                            <x-tables.td>Rp 15.000</x-tables.td>
-                            <x-tables.td class="font-medium">62 porsi</x-tables.td>
-                            <x-tables.td>198 porsi</x-tables.td>
-                            <x-tables.td>
-                                <x-badges.badge variant="success">Aktif</x-badges.badge>
-                            </x-tables.td>
-                            <x-tables.td>
-                                <div class="flex gap-2">
-                                    <button class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus</button>
-                                </div>
-                            </x-tables.td>
-                        </x-tables.tr>
-                        <x-tables.tr>
-                            <x-tables.td>
-                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                </div>
-                            </x-tables.td>
-                            <x-tables.td class="font-semibold text-gray-900">Es Teh Tarik</x-tables.td>
-                            <x-tables.td>Minuman</x-tables.td>
-                            <x-tables.td>Rp 5.000</x-tables.td>
-                            <x-tables.td class="font-medium">120 gelas</x-tables.td>
-                            <x-tables.td>456 gelas</x-tables.td>
-                            <x-tables.td>
-                                <x-badges.badge variant="success">Aktif</x-badges.badge>
-                            </x-tables.td>
-                            <x-tables.td>
-                                <div class="flex gap-2">
-                                    <button class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus</button>
-                                </div>
-                            </x-tables.td>
-                        </x-tables.tr>
-                        <x-tables.tr>
-                            <x-tables.td>
-                                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                </div>
-                            </x-tables.td>
-                            <x-tables.td class="font-semibold text-gray-900">Soto Ayam</x-tables.td>
-                            <x-tables.td>Makanan</x-tables.td>
-                            <x-tables.td>Rp 20.000</x-tables.td>
-                            <x-tables.td class="font-medium">0 porsi</x-tables.td>
-                            <x-tables.td>167 porsi</x-tables.td>
-                            <x-tables.td>
-                                <x-badges.badge variant="warning">Stok Habis</x-badges.badge>
-                            </x-tables.td>
-                            <x-tables.td>
-                                <div class="flex gap-2">
-                                    <button class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus</button>
-                                </div>
-                            </x-tables.td>
-                        </x-tables.tr>
+                        @forelse ($products as $product)
+                            <x-tables.tr>
+                                <x-tables.td>
+                                    <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                        @if ($product->image)
+                                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                        @else
+                                            <svg class="w-6 h-6 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                        @endif
+                                    </div>
+                                </x-tables.td>
+                                <x-tables.td class="font-semibold text-gray-900">{{ $product->name }}</x-tables.td>
+                                <x-tables.td>Rp {{ number_format($product->price, 0, ',', '.') }}</x-tables.td>
+                                <x-tables.td class="font-medium">{{ $product->stock }} item</x-tables.td>
+                                <x-tables.td>
+                                    @if ($product->status === 'available' && $product->stock > 0)
+                                        <x-badges.badge variant="success">Aktif</x-badges.badge>
+                                    @elseif ($product->stock == 0)
+                                        <x-badges.badge variant="warning">Stok Habis</x-badges.badge>
+                                    @else
+                                        <x-badges.badge variant="secondary">Nonaktif</x-badges.badge>
+                                    @endif
+                                </x-tables.td>
+                                <x-tables.td>
+                                    <div class="flex gap-2">
+                                        <a href="/vendor/products/{{ $product->id }}/edit" class="text-primary-700 hover:text-primary-900 text-sm font-medium">Edit</a>
+                                        <form action="/vendor/products/{{ $product->id }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium" onclick="return confirm('Yakin ingin menghapus produk ini?')">Hapus</button>
+                                        </form>
+                                    </div>
+                                </x-tables.td>
+                            </x-tables.tr>
+                        @empty
+                            <x-tables.tr>
+                                <x-tables.td colspan="7" class="text-center py-8">
+                                    <p class="text-gray-600">Belum ada produk. <a href="/vendor/products/create" class="text-primary-700 font-medium">Buat produk baru</a></p>
+                                </x-tables.td>
+                            </x-tables.tr>
+                        @endforelse
                     </x-tables.tbody>
                 </x-tables.table>
 
                 <!-- Pagination -->
                 <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
-                    <p class="text-sm text-gray-600">Menampilkan 1-10 dari 8</p>
-                    <div class="flex gap-2">
-                        <x-buttons.btn variant="secondary" size="sm">Sebelumnya</x-buttons.btn>
-                        <x-buttons.btn variant="secondary" size="sm">Selanjutnya</x-buttons.btn>
-                    </div>
+                    <p class="text-sm text-gray-600">Menampilkan {{ count($products) }} produk</p>
+                    @if ($products instanceof \Illuminate\Pagination\Paginator)
+                        <div class="flex gap-2">
+                            {{ $products->links() }}
+                        </div>
+                    @endif
                 </div>
             </x-cards.card>
         </div>

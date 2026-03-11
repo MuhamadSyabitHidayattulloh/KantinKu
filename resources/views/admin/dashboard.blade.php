@@ -37,10 +37,13 @@
                 Pengaturan
             </x-layout.sidebar-item>
             
-            <x-layout.sidebar-item url="#" 
-                icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>'>
-                Logout
-            </x-layout.sidebar-item>
+            <form action="{{ route('auth.logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    <span>Logout</span>
+                </button>
+            </form>
         </x-layout.sidebar-group>
     </x-layout.sidebar>
 
@@ -59,34 +62,30 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <x-cards.stat-card 
                     title="Total User"
-                    value="1,234"
+                    value="{{ number_format($totalUsers) }}"
                     icon='<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292m0 0a4.004 4.004 0 014 4.354m0 0a4 4 0 11-8 0m6 2a1 1 0 100-2 1 1 0 000 2z"/></svg>'
                     color="primary"
-                    :trend="['type' => 'increase', 'percentage' => 12]"
                 />
                 
                 <x-cards.stat-card 
                     title="Total Vendor"
-                    value="145"
+                    value="{{ number_format($totalVendors) }}"
                     icon='<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12M8 7a2 2 0 100-4 2 2 0 000 4zm0 0a2 2 0 110 4 2 2 0 01-4 0 2 2 0 110-4zm4 8h8m-8 0a2 2 0 100-4 2 2 0 000 4zm0 0a2 2 0 110 4 2 2 0 01-4 0 2 2 0 110-4zm4 8h8m-8 0a2 2 0 100-4 2 2 0 000 4zm0 0a2 2 0 110 4 2 2 0 01-4 0 2 2 0 110-4z"/></svg>'
                     color="accent"
-                    :trend="['type' => 'increase', 'percentage' => 5]"
                 />
                 
                 <x-cards.stat-card 
                     title="Total Pesanan"
-                    value="5,678"
+                    value="{{ number_format($totalOrders) }}"
                     icon='<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>'
                     color="green"
-                    :trend="['type' => 'increase', 'percentage' => 8]"
                 />
                 
                 <x-cards.stat-card 
                     title="Pendapatan"
-                    value="Rp 45.2M"
+                    value="Rp {{ number_format($totalRevenue, 0, ',', '.') }}"
                     icon='<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
                     color="blue"
-                    :trend="['type' => 'increase', 'percentage' => 15]"
                 />
             </div>
 
@@ -110,30 +109,38 @@
                                 </x-tables.tr>
                             </x-tables.thead>
                             <x-tables.tbody>
-                                <x-tables.tr>
-                                    <x-tables.td class="font-semibold text-gray-900">#ORD-001</x-tables.td>
-                                    <x-tables.td>Budi Santoso</x-tables.td>
-                                    <x-tables.td>Rp 125.000</x-tables.td>
-                                    <x-tables.td>
-                                        <x-badges.badge variant="success">Selesai</x-badges.badge>
-                                    </x-tables.td>
-                                </x-tables.tr>
-                                <x-tables.tr>
-                                    <x-tables.td class="font-semibold text-gray-900">#ORD-002</x-tables.td>
-                                    <x-tables.td>Siti Nur Azizah</x-tables.td>
-                                    <x-tables.td>Rp 87.500</x-tables.td>
-                                    <x-tables.td>
-                                        <x-badges.badge variant="warning">Diproses</x-badges.badge>
-                                    </x-tables.td>
-                                </x-tables.tr>
-                                <x-tables.tr>
-                                    <x-tables.td class="font-semibold text-gray-900">#ORD-003</x-tables.td>
-                                    <x-tables.td>Ahmad Wijaya</x-tables.td>
-                                    <x-tables.td>Rp 256.000</x-tables.td>
-                                    <x-tables.td>
-                                        <x-badges.badge variant="info">Menunggu</x-badges.badge>
-                                    </x-tables.td>
-                                </x-tables.tr>
+                                @forelse ($recentOrders as $order)
+                                    <x-tables.tr>
+                                        <x-tables.td class="font-semibold text-gray-900">#{{ strtoupper($order->order_number) }}</x-tables.td>
+                                        <x-tables.td>{{ $order->user->name }}</x-tables.td>
+                                        <x-tables.td>Rp {{ number_format($order->total_amount, 0, ',', '.') }}</x-tables.td>
+                                        <x-tables.td>
+                                            @php
+                                                $statusStyles = [
+                                                    'pending' => 'info',
+                                                    'completed' => 'warning',
+                                                    'ready' => 'success',
+                                                    'cancelled' => 'danger'
+                                                ];
+                                                $statusText = [
+                                                    'pending' => 'Menunggu',
+                                                    'completed' => 'Diproses',
+                                                    'ready' => 'Siap Diambil',
+                                                    'cancelled' => 'Dibatalkan'
+                                                ];
+                                            @endphp
+                                            <x-badges.badge variant="{{ $statusStyles[$order->status] ?? 'secondary' }}">
+                                                {{ $statusText[$order->status] ?? ucfirst($order->status) }}
+                                            </x-badges.badge>
+                                        </x-tables.td>
+                                    </x-tables.tr>
+                                @empty
+                                    <x-tables.tr>
+                                        <x-tables.td colspan="4" class="text-center py-4">
+                                            <p class="text-gray-600">Belum ada pesanan</p>
+                                        </x-tables.td>
+                                    </x-tables.tr>
+                                @endforelse
                             </x-tables.tbody>
                         </x-tables.table>
                     </x-cards.card>
@@ -146,41 +153,17 @@
                     </div>
                     
                     <div class="space-y-4">
-                        <div class="flex justify-between items-start pb-3 border-b border-gray-100">
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-800">Nasi Goreng</p>
-                                <p class="text-sm text-gray-500">234 terjual</p>
+                        @forelse ($topProducts as $product)
+                            <div class="flex justify-between items-start {{ !$loop->last ? 'pb-3 border-b border-gray-100' : '' }}">
+                                <div class="flex-1">
+                                    <p class="font-medium text-gray-800">{{ $product->name }}</p>
+                                    <p class="text-sm text-gray-500">{{ $product->order_details_count ?? 0 }} terjual</p>
+                                </div>
+                                <span class="text-primary-700 font-semibold">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                             </div>
-                            <span class="text-primary-700 font-semibold">Rp 25K</span>
-                        </div>
-                        <div class="flex justify-between items-start pb-3 border-b border-gray-100">
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-800">Mie Kuah</p>
-                                <p class="text-sm text-gray-500">198 terjual</p>
-                            </div>
-                            <span class="text-primary-700 font-semibold">Rp 15K</span>
-                        </div>
-                        <div class="flex justify-between items-start pb-3 border-b border-gray-100">
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-800">Es Teh</p>
-                                <p class="text-sm text-gray-500">456 terjual</p>
-                            </div>
-                            <span class="text-primary-700 font-semibold">Rp 5K</span>
-                        </div>
-                        <div class="flex justify-between items-start pb-3 border-b border-gray-100">
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-800">Soto Ayam</p>
-                                <p class="text-sm text-gray-500">167 terjual</p>
-                            </div>
-                            <span class="text-primary-700 font-semibold">Rp 20K</span>
-                        </div>
-                        <div class="flex justify-between items-start">
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-800">Bakso Kuah</p>
-                                <p class="text-sm text-gray-500">145 terjual</p>
-                            </div>
-                            <span class="text-primary-700 font-semibold">Rp 18K</span>
-                        </div>
+                        @empty
+                            <p class="text-gray-600 text-sm">Belum ada pesanan</p>
+                        @endforelse
                     </div>
                 </x-cards.card>
             </div>

@@ -1,0 +1,100 @@
+<?php
+
+namespace App\Http\Controllers\Vendor;
+
+use App\Models\Product;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+
+class ProductController extends Controller
+{
+    public function index(Request $request)
+    {
+        $vendor = Auth::user();
+        $query = $vendor->products();
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if ($request->has('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        $products = $query->paginate(15);
+
+        return view('vendor.products', ['products' => $products]);
+    }
+
+    public function create()
+    {
+        return view('vendor.products-create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        // Set default status as available
+        $validated['status'] = 'available';
+
+        Auth::user()->products()->create($validated);
+
+        return redirect()->route('vendor.products.index')->with('success', 'Produk berhasil ditambahkan');
+    }
+
+    public function edit(Product $product)
+    {
+        if ($product->vendor_id !== Auth::id()) {
+            return back()->withErrors('Unauthorized');
+        }
+
+        return view('vendor.products-edit', ['product' => $product]);
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        if ($product->vendor_id !== Auth::id()) {
+            return back()->withErrors('Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        $product->update($validated);
+
+        return redirect()->route('vendor.products.index')->with('success', 'Produk berhasil diperbarui');
+    }
+
+    public function destroy(Product $product)
+    {
+        if ($product->vendor_id !== Auth::id()) {
+            return back()->withErrors('Unauthorized');
+        }
+
+        $product->delete();
+
+        return redirect()->route('vendor.products.index')->with('success', 'Product deleted successfully');
+    }
+}
