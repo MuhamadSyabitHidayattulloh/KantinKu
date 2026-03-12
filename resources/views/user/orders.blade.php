@@ -10,7 +10,12 @@
             <h1 class="font-poppins text-2xl font-bold text-primary-900">Kantinku</h1>
             <div class="hidden md:flex gap-6">
                 <a href="/user/explore" class="text-gray-600 hover:text-gray-900">Jelajahi</a>
-                <a href="/user/cart" class="text-gray-600 hover:text-gray-900">Keranjang</a>
+                <div class="relative">
+                    <a href="/user/cart" class="text-gray-600 hover:text-gray-900">Keranjang</a>
+                    @if(count(session()->get('cart', [])) > 0)
+                        <span class="absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ count(session()->get('cart', [])) }}</span>
+                    @endif
+                </div>
                 <a href="/user/orders" class="text-primary-700 font-medium hover:text-primary-900">Pesanan</a>
             </div>
         </div>
@@ -69,11 +74,24 @@ function toggleMobileMenu() {
 
         <!-- Filter Tabs -->
         <div class="flex gap-4 mb-8 border-b border-gray-200 overflow-x-auto">
-            <button class="px-6 py-3 border-b-2 border-primary-700 text-primary-700 font-medium whitespace-nowrap">Semua</button>
-            <button class="px-6 py-3 text-gray-600 hover:text-gray-900 whitespace-nowrap">Sedang Diproses</button>
-            <button class="px-6 py-3 text-gray-600 hover:text-gray-900 whitespace-nowrap">Siap Diambil</button>
-            <button class="px-6 py-3 text-gray-600 hover:text-gray-900 whitespace-nowrap">Selesai</button>
-            <button class="px-6 py-3 text-gray-600 hover:text-gray-900 whitespace-nowrap">Dibatalkan</button>
+            <a href="{{ route('user.orders.index') }}" class="px-6 py-3 border-b-2 {{ request('status') ? 'border-gray-300 text-gray-600 hover:text-gray-900' : 'border-primary-700 text-primary-700 font-medium' }} whitespace-nowrap transition">
+                Semua
+            </a>
+            <a href="{{ route('user.orders.index', ['status' => 'pending']) }}" class="px-6 py-3 border-b-2 {{ request('status') === 'pending' ? 'border-primary-700 text-primary-700 font-medium' : 'border-gray-300 text-gray-600 hover:text-gray-900' }} whitespace-nowrap transition">
+                Menunggu Persetujuan
+            </a>
+            <a href="{{ route('user.orders.index', ['status' => 'processing']) }}" class="px-6 py-3 border-b-2 {{ request('status') === 'processing' ? 'border-primary-700 text-primary-700 font-medium' : 'border-gray-300 text-gray-600 hover:text-gray-900' }} whitespace-nowrap transition">
+                Sedang Diproses
+            </a>
+            <a href="{{ route('user.orders.index', ['status' => 'ready']) }}" class="px-6 py-3 border-b-2 {{ request('status') === 'ready' ? 'border-primary-700 text-primary-700 font-medium' : 'border-gray-300 text-gray-600 hover:text-gray-900' }} whitespace-nowrap transition">
+                Siap Diambil
+            </a>
+            <a href="{{ route('user.orders.index', ['status' => 'completed']) }}" class="px-6 py-3 border-b-2 {{ request('status') === 'completed' ? 'border-primary-700 text-primary-700 font-medium' : 'border-gray-300 text-gray-600 hover:text-gray-900' }} whitespace-nowrap transition">
+                Selesai
+            </a>
+            <a href="{{ route('user.orders.index', ['status' => 'cancelled']) }}" class="px-6 py-3 border-b-2 {{ request('status') === 'cancelled' ? 'border-primary-700 text-primary-700 font-medium' : 'border-gray-300 text-gray-600 hover:text-gray-900' }} whitespace-nowrap transition">
+                Dibatalkan
+            </a>
         </div>
 
         <!-- Order Items -->
@@ -102,8 +120,8 @@ function toggleMobileMenu() {
                             <h3 class="font-poppins font-bold text-lg text-gray-900">#{{ strtoupper($order->order_number) }}</h3>
                             <p class="text-sm text-gray-500">{{ $vendorNames }} • {{ $order->created_at->format('d M Y, H:i') }}</p>
                         </div>
-                        <span class="px-4 py-2 {{ $statusStyles[$order->status] ?? 'bg-gray-100 text-gray-800' }} rounded-full text-sm font-semibold">
-                            {{ $statusText[$order->status] ?? ucfirst($order->status) }}
+                        <span class="px-4 py-2 {{ $statusStyles[$order->getCalculatedStatus()] ?? 'bg-gray-100 text-gray-800' }} rounded-full text-sm font-semibold">
+                            {{ $statusText[$order->getCalculatedStatus()] ?? ucfirst($order->getCalculatedStatus()) }}
                         </span>
                     </div>
 
@@ -143,29 +161,32 @@ function toggleMobileMenu() {
                     </div>
 
                     <div class="border-t border-gray-200 pt-4">
-                        @if($order->status === 'pending')
+                        @php
+                            $calculatedStatus = $order->getCalculatedStatus();
+                        @endphp
+                        @if($calculatedStatus === 'pending')
                             <div class="bg-yellow-50 rounded-lg p-3 mb-4 flex items-start gap-3">
                                 <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                                <p class="text-sm text-yellow-800"><span class="font-semibold">Status:</span> Pesanan menunggu persetujuan vendor</p>
+                                <p class="text-sm text-yellow-800"><span class="font-semibold">Status:</span> Ada produk menunggu persetujuan vendor</p>
                             </div>
-                        @elseif($order->status === 'processing')
+                        @elseif($calculatedStatus === 'processing')
                             <div class="bg-orange-50 rounded-lg p-3 mb-4 flex items-start gap-3">
                                 <svg class="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zm-11-1a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd"/></svg>
-                                <p class="text-sm text-orange-800"><span class="font-semibold">Status:</span> Pesanan sedang dikerjakan</p>
+                                <p class="text-sm text-orange-800"><span class="font-semibold">Status:</span> Ada produk sedang dikerjakan</p>
                             </div>
-                        @elseif($order->status === 'ready')
+                        @elseif($calculatedStatus === 'ready')
                             <div class="bg-blue-50 rounded-lg p-3 mb-4 flex items-start gap-3">
                                 <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                                <p class="text-sm text-blue-800"><span class="font-semibold">Status:</span> Pesanan siap diambil!</p>
+                                <p class="text-sm text-blue-800"><span class="font-semibold">Status:</span> Ada produk siap diambil!</p>
                             </div>
-                        @elseif($order->status === 'completed')
+                        @elseif($calculatedStatus === 'completed')
                             <div class="bg-green-50 rounded-lg p-3 mb-4 flex items-start gap-3">
                                 <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                                <p class="text-sm text-green-800"><span class="font-semibold">Status:</span> Pesanan selesai</p>
+                                <p class="text-sm text-green-800"><span class="font-semibold">Status:</span> Semua pesanan selesai</p>
                             </div>
-                        @elseif($order->status === 'cancelled')
+                        @elseif($calculatedStatus === 'cancelled')
                             <div class="bg-red-50 rounded-lg p-3 mb-4">
-                                <p class="text-sm text-red-800"><span class="font-semibold">Status:</span> Pesanan dibatalkan</p>
+                                <p class="text-sm text-red-800"><span class="font-semibold">Status:</span> Ada produk dibatalkan</p>
                             </div>
                         @endif
 
@@ -174,14 +195,14 @@ function toggleMobileMenu() {
                                 <p class="text-sm text-gray-600 mb-1">Total Bayar</p>
                                 <p class="font-poppins font-bold text-lg text-primary-700">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</p>
                             </div>
-                            @if($order->status === 'pending')
+                            @if($calculatedStatus === 'pending')
                                 <form action="{{ route('user.orders.cancel', $order->id) }}" method="POST" onsubmit="return confirm('Batalkan pesanan ini?')">
                                     @csrf
                                     <button type="submit" class="px-6 py-2 border-2 border-red-700 text-red-700 font-semibold rounded-lg hover:bg-red-50 transition">
                                         Batalkan
                                     </button>
                                 </form>
-                            @elseif($order->status === 'cancelled')
+                            @elseif($calculatedStatus === 'cancelled')
                                 <form action="{{ route('user.cart.add', ['product' => $order->orderDetails->first()->product]) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="px-6 py-2 border-2 border-primary-700 text-primary-700 font-semibold rounded-lg hover:bg-primary-50 transition">

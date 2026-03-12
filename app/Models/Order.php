@@ -35,20 +35,61 @@ class Order extends Model
         return $this->hasMany(OrderDetail::class);
     }
 
+    // Calculate status based on order details (per product)
+    public function getCalculatedStatus()
+    {
+        if ($this->orderDetails->isEmpty()) {
+            return 'pending';
+        }
+
+        // If any product is cancelled, mark as cancelled
+        if ($this->orderDetails->where('status', 'cancelled')->isNotEmpty()) {
+            return 'cancelled';
+        }
+
+        // If any product is still pending, mark as pending
+        if ($this->orderDetails->where('status', 'pending')->isNotEmpty()) {
+            return 'pending';
+        }
+
+        // If any product is still processing, mark as processing
+        if ($this->orderDetails->where('status', 'processing')->isNotEmpty()) {
+            return 'processing';
+        }
+
+        // If any product is still ready, mark as ready
+        if ($this->orderDetails->where('status', 'ready')->isNotEmpty()) {
+            return 'ready';
+        }
+
+        // All products completed
+        return 'completed';
+    }
+
     // Helper methods
     public function isPending()
     {
-        return $this->status === 'pending';
+        return $this->getCalculatedStatus() === 'pending';
+    }
+
+    public function isProcessing()
+    {
+        return $this->getCalculatedStatus() === 'processing';
+    }
+
+    public function isReady()
+    {
+        return $this->getCalculatedStatus() === 'ready';
     }
 
     public function isCompleted()
     {
-        return $this->status === 'completed';
+        return $this->getCalculatedStatus() === 'completed';
     }
 
     public function isCancelled()
     {
-        return $this->status === 'cancelled';
+        return $this->getCalculatedStatus() === 'cancelled';
     }
 
     // Generate order number

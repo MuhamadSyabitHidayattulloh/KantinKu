@@ -15,10 +15,14 @@ class OrderController extends Controller
         $query = $user->orders();
 
         if ($request->has('status')) {
-            $query->where('status', $request->input('status'));
+            $status = $request->input('status');
+            // Filter orders by their order details status
+            $query->whereHas('orderDetails', function ($q) use ($status) {
+                $q->where('status', $status);
+            });
         }
 
-        $orders = $query->with('orderDetails.product')->latest()->paginate(15);
+        $orders = $query->with('orderDetails.product.vendor')->latest()->paginate(15);
 
         return view('user.orders', ['orders' => $orders]);
     }
@@ -44,11 +48,15 @@ class OrderController extends Controller
             return back()->withErrors('Unauthorized');
         }
 
-        if ($order->status !== 'pending') {
-            return back()->withErrors('Only pending orders can be cancelled');
+        // Check if any order detail is not pending
+        if ($order->orderDetails->whereNotIn('status', ['pending'])->isNotEmpty()) {
+            return back()->withErrors('Hanya pesanan yang masih menunggu yang bisa dibatalkan');
         }
 
-        $order->update(['status' => 'cancelled']);
+        // Cancel all order details
+        foreach ($order->orderDetails as $detail) {
+            $detail->update(['status' => 'cancelled']);
+        }
 
         // Return wallet balance
         if ($order->total_amount > 0 && $user->wallet) {
@@ -62,6 +70,6 @@ class OrderController extends Controller
             }
         }
 
-        return back()->with('success', 'Order cancelled and wallet refunded');
+        return back()->with('success', 'Pesanan dibatalkan dan saldo dembali');
     }
 }

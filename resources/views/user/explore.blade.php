@@ -8,7 +8,12 @@
             <h1 class="font-poppins text-2xl font-bold text-primary-900">Kantinku</h1>
             <div class="hidden md:flex gap-6">
                 <a href="/user/explore" class="text-primary-700 font-medium hover:text-primary-900">Jelajahi</a>
-                <a href="/user/cart" class="text-gray-600 hover:text-gray-900">Keranjang</a>
+                <div class="relative">
+                    <a href="/user/cart" class="text-gray-600 hover:text-gray-900">Keranjang</a>
+                    @if(count(session()->get('cart', [])) > 0)
+                        <span class="absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ count(session()->get('cart', [])) }}</span>
+                    @endif
+                </div>
                 <a href="/user/orders" class="text-gray-600 hover:text-gray-900">Pesanan</a>
             </div>
         </div>
@@ -29,7 +34,7 @@
             </button>
         </div>
     </div>
-    
+
     <!-- Mobile Menu -->
     <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 bg-white">
         <div class="px-6 py-4 space-y-2">
