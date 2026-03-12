@@ -47,17 +47,25 @@
     <!-- Main Content -->
     <main class="flex-1 overflow-auto flex flex-col">
         <x-layout.page-header title="Kelola Pesanan">
-            <div class="flex gap-3">
-                <input type="text" placeholder="Cari pesanan..." class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600 w-64">
-                <select class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600">
-                    <option>Semua Status</option>
-                    <option>Menunggu</option>
-                    <option>Di Proses</option>
-                    <option>Siap Diambil</option>
-                    <option>Selesai</option>
-                    <option>Dibatalkan</option>
+            <form action="{{ route('vendor.orders.index') }}" method="GET" class="flex gap-3">
+                <input type="text" name="search" placeholder="Cari pesanan atau customer..." value="{{ request('search') }}" class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600 w-64">
+                <select name="status" class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600">
+                    <option value="">Semua Status</option>
+                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Menunggu</option>
+                    <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Di Proses</option>
+                    <option value="ready" {{ request('status') === 'ready' ? 'selected' : '' }}>Siap Diambil</option>
+                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Selesai</option>
+                    <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
                 </select>
-            </div>
+                <button type="submit" class="px-6 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800 transition font-medium">
+                    Filter
+                </button>
+                @if(request('search') || request('status'))
+                    <a href="{{ route('vendor.orders.index') }}" class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-medium">
+                        Reset
+                    </a>
+                @endif
+            </form>
         </x-layout.page-header>
 
         <!-- Content -->

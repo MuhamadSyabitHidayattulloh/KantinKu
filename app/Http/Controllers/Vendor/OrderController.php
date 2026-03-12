@@ -20,6 +20,23 @@ class OrderController extends Controller
             $q->where('vendor_id', $vendor->id);
         });
 
+        // Filter by order number search
+        if ($request->has('search') && !empty($request->input('search'))) {
+            $search = $request->input('search');
+            $query->where('order_number', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  });
+        }
+
+        // Filter by order detail status
+        if ($request->has('status') && !empty($request->input('status'))) {
+            $status = $request->input('status');
+            $query->whereHas('orderDetails', function ($q) use ($status) {
+                $q->where('status', $status);
+            });
+        }
+
         $orders = $query->with('user', 'orderDetails.product')->latest()->paginate(15);
 
         return view('vendor.orders', ['orders' => $orders]);

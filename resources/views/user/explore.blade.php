@@ -77,21 +77,23 @@ function toggleMobileMenu() {
 
         <!-- Search & Filter -->
         <div class="bg-white rounded-xl shadow-md p-6 mb-8">
-            <div class="flex gap-4 flex-wrap">
-                <input type="text" placeholder="Cari produk..." class="flex-1 min-w-64 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600">
-                <select class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600">
-                    <option>Semua Kategori</option>
-                    <option>Makanan</option>
-                    <option>Minuman</option>
-                    <option>Snack</option>
+            <form action="{{ route('user.explore') }}" method="GET" class="flex gap-4 flex-wrap">
+                <input type="text" name="search" placeholder="Cari produk..." value="{{ request('search') }}" class="flex-1 min-w-64 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600">
+                <select name="sort" class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600">
+                    <option value="">-- Urutkan --</option>
+                    <option value="newest" {{ request('sort') === 'newest' ? 'selected' : '' }}>Terbaru</option>
+                    <option value="price_asc" {{ request('sort') === 'price_asc' ? 'selected' : '' }}>Harga Terendah</option>
+                    <option value="price_desc" {{ request('sort') === 'price_desc' ? 'selected' : '' }}>Harga Tertinggi</option>
                 </select>
-                <select class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600">
-                    <option>Terdekat</option>
-                    <option>Terlaris</option>
-                    <option>Rating Tertinggi</option>
-                    <option>Harga Terendah</option>
-                </select>
-            </div>
+                <button type="submit" class="px-6 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800 transition font-medium">
+                    Cari
+                </button>
+                @if(request('search') || request('sort'))
+                    <a href="{{ route('user.explore') }}" class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-medium">
+                        Reset
+                    </a>
+                @endif
+            </form>
         </div>
 
         <!-- Products Grid -->
