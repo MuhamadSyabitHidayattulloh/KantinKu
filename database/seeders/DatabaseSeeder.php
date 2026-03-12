@@ -20,40 +20,56 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Create Admin User
-        User::factory()->admin()->create([
+        $admin = User::factory()->admin()->create([
             'name' => 'Admin',
             'email' => 'admin@kantinku.com',
         ]);
 
-        User::factory()->vendor()->create([
+        $vendor1 = User::factory()->vendor()->create([
             'name' => 'Vendor',
             'email' => 'vendor@kantinku.com',
         ]);
 
-        User::factory()->vendor()->create([
+        $vendor2 = User::factory()->vendor()->create([
             'name' => 'Vendor2',
             'email' => 'vendor2@kantinku.com',
         ]);
 
-        User::factory()->create([
+        $user = User::factory()->create([
             'name' => 'User',
             'email' => 'user@kantinku.com',
         ]);
 
-        Product::factory()
-            ->count(1)
-            ->for(User::where('email', 'vendor@kantinku.com')->first(), 'vendor')
-            ->create();
-
-        Product::factory()
-            ->count(1)
-            ->for(User::where('email', 'vendor2@kantinku.com')->first(), 'vendor')
-            ->create();
+        // Create wallets for admin, vendors, and user
+        Wallet::create([
+            'user_id' => $admin->id,
+            'balance' => 0,
+        ]);
 
         Wallet::create([
-            'user_id' => User::where('email', 'user@kantinku.com')->first()->id,
+            'user_id' => $vendor1->id,
+            'balance' => 0,
+        ]);
+
+        Wallet::create([
+            'user_id' => $vendor2->id,
+            'balance' => 0,
+        ]);
+
+        Wallet::create([
+            'user_id' => $user->id,
             'balance' => 1000000,
         ]);
+
+        Product::factory()
+            ->count(1)
+            ->for($vendor1, 'vendor')
+            ->create();
+
+        Product::factory()
+            ->count(1)
+            ->for($vendor2, 'vendor')
+            ->create();
 
         // Create Regular Users with Wallets
         // User::factory(10)->create()->each(function ($user) {

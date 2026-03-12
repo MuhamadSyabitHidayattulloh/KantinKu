@@ -16,6 +16,15 @@
 
     <!-- User Profile Section (Footer) -->
     <div class="p-4 border-t border-primary-700 bg-primary-800 flex-shrink-0">
+        <div class="mb-3 pb-3 border-b border-primary-700">
+            <p class="text-sm font-medium text-white">{{ auth()->user()->name }}</p>
+            <p class="text-xs text-primary-200">{{ auth()->user()->role === 'admin' ? 'Administrator' : 'Vendor' }}</p>
+            @if(auth()->user()->wallet)
+                <p class="text-xs text-primary-100 mt-2">
+                    <span class="text-primary-300">Saldo:</span> Rp {{ number_format(auth()->user()->wallet->balance, 0, ',', '.') }}
+                </p>
+            @endif
+        </div>
         <x-slot name="footer"></x-slot>
     </div>
 </aside>

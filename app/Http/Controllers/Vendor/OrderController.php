@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Vendor;
 
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -37,7 +38,24 @@ class OrderController extends Controller
             'status' => 'required|in:pending,processing,ready,completed,cancelled',
         ]);
 
+        $oldStatus = $detail->status;
         $detail->update($validated);
+
+        // Saat status berubah menjadi completed, topup vendor dan admin wallet
+        if ($validated['status'] === 'completed' && $oldStatus !== 'completed') {
+            // Vendor dapat 95% dari subtotal
+            $vendorRevenue = $detail->subtotal * 0.95;
+            if ($vendor->wallet) {
+                $vendor->wallet->topup($vendorRevenue, $detail->order->order_number, "Revenue from order {$detail->order->order_number} - {$detail->product->name}");
+            }
+
+            // Admin dapat 5% dari subtotal
+            $adminFee = $detail->subtotal * 0.05;
+            $admin = User::where('role', 'admin')->first();
+            if ($admin && $admin->wallet) {
+                $admin->wallet->topup($adminFee, $detail->order->order_number, "Admin fee from order {$detail->order->order_number}");
+            }
+        }
 
         return back()->with('success', 'Status produk ' . $detail->product->name . ' berhasil diperbarui');
     }

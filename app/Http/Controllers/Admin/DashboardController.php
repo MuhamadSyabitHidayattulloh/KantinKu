@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\WalletTransaction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -16,7 +17,8 @@ class DashboardController extends Controller
         $totalUsers = User::where('role', 'user')->count();
         $totalVendors = User::where('role', 'vendor')->count();
         $totalOrders = Order::count();
-        $totalRevenue = Order::where('status', 'completed')->sum('total_amount');
+        $admin = User::where('role', 'admin')->first();
+        $adminRevenue = $admin && $admin->wallet ? $admin->wallet->balance : 0;
 
         $recentOrders = Order::with('user')->latest()->take(10)->get();
         $topProducts = Product::withCount('orderDetails')
@@ -28,7 +30,7 @@ class DashboardController extends Controller
             'totalUsers' => $totalUsers,
             'totalVendors' => $totalVendors,
             'totalOrders' => $totalOrders,
-            'totalRevenue' => $totalRevenue,
+            'totalRevenue' => $adminRevenue,
             'recentOrders' => $recentOrders,
             'topProducts' => $topProducts,
         ]);

@@ -19,21 +19,28 @@ class ReportController extends Controller
             $q->where('vendor_id', $vendor->id);
         });
 
-        $totalRevenue = $vendorOrders->where('status', 'completed')->sum('total_amount');
+        // Revenue adalah wallet balance vendor (accumulated dari order yang completed)
+        $totalRevenue = $vendor->wallet ? $vendor->wallet->balance : 0;
         $totalOrders = $vendorOrders->count();
         $totalProducts = $vendor->products()->count();
 
-        // Orders by date (last 30 days)
-        $ordersByDate = $vendorOrders->where('status', 'completed')
-            ->whereDate('created_at', '>=', now()->subDays(30))
-            ->groupBy(DB::raw('DATE(created_at)'))
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as count, SUM(total_amount) as revenue')
+        // Orders by date (last 30 days) - hanya yang sudah completed
+        $ordersByDate = DB::table('order_details')
+            ->join('products', 'products.id', '=', 'order_details.product_id')
+            ->join('orders', 'orders.id', '=', 'order_details.order_id')
+            ->where('products.vendor_id', $vendor->id)
+            ->where('order_details.status', 'completed')
+            ->whereDate('order_details.created_at', '>=', now()->subDays(30))
+            ->groupBy(DB::raw('DATE(order_details.created_at)'))
+            ->selectRaw('DATE(order_details.created_at) as date, COUNT(*) as count, SUM(order_details.subtotal * 0.95) as revenue')
             ->orderBy('date')
             ->get();
 
         // Top products
         $topProducts = $vendor->products()
-            ->withCount('orderDetails')
+            ->withCount(['orderDetails' => function ($q) {
+                $q->where('status', 'completed');
+            }])
             ->orderByDesc('order_details_count')
             ->take(10)
             ->get();

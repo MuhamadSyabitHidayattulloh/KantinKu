@@ -15,12 +15,16 @@ class DashboardController extends Controller
         $vendor = Auth::user();
 
         $totalProducts = $vendor->products()->count();
-        $totalOrders = Order::whereHas('orderDetails.product', function ($query) use ($vendor) {
-            $query->where('vendor_id', $vendor->id);
-        })->count();
-        $totalRevenue = Order::whereHas('orderDetails.product', function ($query) use ($vendor) {
-            $query->where('vendor_id', $vendor->id);
-        })->where('status', 'completed')->sum('total_amount');
+        // Hanya hitung orders yang memiliki minimal 1 completed product dari vendor
+        $totalOrders = Order::whereHas('orderDetails', function ($q) use ($vendor) {
+            $q->where('status', 'completed')
+              ->whereHas('product', function ($p) use ($vendor) {
+                  $p->where('vendor_id', $vendor->id);
+              });
+        })->distinct()->count();
+
+        // Revenue adalah wallet balance vendor (accumulated dari order yang completed)
+        $totalRevenue = $vendor->wallet ? $vendor->wallet->balance : 0;
 
         $recentProducts = $vendor->products()->latest()->take(5)->get();
         $recentOrders = Order::whereHas('orderDetails.product', function ($query) use ($vendor) {
