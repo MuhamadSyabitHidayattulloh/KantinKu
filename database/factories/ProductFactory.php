@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,6 +21,7 @@ class ProductFactory extends Factory
     {
         return [
             'vendor_id' => User::factory()->vendor(),
+            'category_id' => Category::inRandomOrder()->first()?->id ?? Category::factory(),
             'name' => fake()->words(3, true),
             'description' => fake()->sentence(),
             'price' => fake()->randomFloat(2, 10000, 500000),

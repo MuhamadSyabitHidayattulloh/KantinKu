@@ -79,6 +79,12 @@ function toggleMobileMenu() {
         <div class="bg-white rounded-xl shadow-md p-6 mb-8">
             <form action="{{ route('user.explore') }}" method="GET" class="flex gap-4 flex-wrap">
                 <input type="text" name="search" placeholder="Cari produk..." value="{{ request('search') }}" class="flex-1 min-w-64 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600">
+                <select name="category" class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600">
+                    <option value="">Semua Kategori</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                    @endforeach
+                </select>
                 <select name="sort" class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600">
                     <option value="">-- Urutkan --</option>
                     <option value="newest" {{ request('sort') === 'newest' ? 'selected' : '' }}>Terbaru</option>
@@ -88,7 +94,7 @@ function toggleMobileMenu() {
                 <button type="submit" class="px-6 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800 transition font-medium">
                     Cari
                 </button>
-                @if(request('search') || request('sort'))
+                @if(request('search') || request('sort') || request('category'))
                     <a href="{{ route('user.explore') }}" class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-medium">
                         Reset
                     </a>
@@ -110,6 +116,7 @@ function toggleMobileMenu() {
                     </div>
                     <div class="p-4">
                         <div class="mb-3">
+                            <p class="text-xs text-accent-600 font-semibold uppercase">{{ $product->category?->name ?? 'Uncategorized' }}</p>
                             <p class="text-sm text-gray-500 font-medium">{{ $product->vendor->name }}</p>
                             <h3 class="font-poppins font-semibold text-gray-900">{{ $product->name }}</h3>
                         </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -16,6 +17,10 @@ class ExploreController extends Controller
             $search = $request->input('search');
             $query->where('name', 'like', "%{$search}%")
                   ->orWhere('description', 'like', "%{$search}%");
+        }
+
+        if ($request->has('category') && !empty($request->input('category'))) {
+            $query->where('category_id', $request->input('category'));
         }
 
         if ($request->has('vendor')) {
@@ -35,9 +40,10 @@ class ExploreController extends Controller
             $query->latest();
         }
 
-        $products = $query->with('vendor')->paginate(12);
+        $products = $query->with('vendor', 'category')->paginate(12);
+        $categories = Category::all();
 
-        return view('user.explore', ['products' => $products]);
+        return view('user.explore', ['products' => $products, 'categories' => $categories]);
     }
 
     public function show(Product $product)

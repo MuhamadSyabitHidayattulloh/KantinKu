@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Vendor;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -30,12 +31,14 @@ class ProductController extends Controller
 
     public function create()
     {
-        return view('vendor.products-create');
+        $categories = Category::all();
+        return view('vendor.products-create', ['categories' => $categories]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
@@ -60,7 +63,8 @@ class ProductController extends Controller
         if ($product->vendor_id !== Auth::id()) {
             return back()->withErrors('Unauthorized');
         }
-
+$categories = Category::all();
+        return view('vendor.products-edit', ['product' => $product, 'categories' => $categories
         return view('vendor.products-edit', ['product' => $product]);
     }
 
@@ -70,7 +74,8 @@ class ProductController extends Controller
             return back()->withErrors('Unauthorized');
         }
 
-        $validated = $request->validate([
+        $valicategory_id' => 'required|exists:categories,id',
+            'dated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',

@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Vendor\DashboardController as VendorDashboardController;
@@ -50,6 +51,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('/users', AdminUserController::class);
 
         Route::resource('/vendors', AdminVendorController::class);
+
+        Route::resource('/categories', AdminCategoryController::class);
 
         Route::resource('/transactions', TransactionController::class)->only(['index']);
         Route::post('/transactions/topup', [TransactionController::class, 'topup'])->name('transactions.topup');
