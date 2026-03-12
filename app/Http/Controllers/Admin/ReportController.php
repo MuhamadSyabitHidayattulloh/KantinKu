@@ -8,6 +8,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ReportController extends Controller
 {
@@ -53,5 +54,41 @@ class ReportController extends Controller
             'ordersByDate' => $ordersByDate,
             'topVendors' => $topVendors,
         ]);
+    }
+
+    public function export()
+    {
+        // Get data sama seperti di method index()
+        $ordersByDate = DB::table('order_details')
+            ->whereDate('created_at', '>=', now()->subDays(30))
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count, SUM(subtotal) as revenue')
+            ->orderBy('date')
+            ->get();
+
+        // Create CSV response
+        $response = new StreamedResponse(function () use ($ordersByDate) {
+            $handle = fopen('php://output', 'w');
+
+            // Header
+            fputcsv($handle, ['Tanggal', 'Jumlah Pesanan', 'Total Penjualan', 'Rata-rata'], ';');
+
+            // Data rows
+            foreach ($ordersByDate as $data) {
+                fputcsv($handle, [
+                    \Carbon\Carbon::parse($data->date)->format('d/m/Y'),
+                    $data->count,
+                    'Rp ' . number_format($data->revenue, 0, ',', '.'),
+                    'Rp ' . number_format($data->revenue / max($data->count, 1), 0, ',', '.'),
+                ], ';');
+            }
+
+            fclose($handle);
+        }, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="laporan-admin-' . now()->format('Y-m-d') . '.csv"',
+        ]);
+
+        return $response;
     }
 }

@@ -58,6 +58,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/transactions/{transaction}/reject', [TransactionController::class, 'reject'])->name('transactions.reject');
 
         Route::get('/reports', [AdminReportController::class, 'index'])->name('reports');
+        Route::get('/reports/export', [AdminReportController::class, 'export'])->name('reports.export');
     });
 
     // Vendor Routes
@@ -70,6 +71,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/order-details/{detail}/status', [VendorOrderController::class, 'updateDetailStatus'])->name('orderDetails.updateStatus');
 
         Route::get('/reports', [VendorReportController::class, 'index'])->name('reports');
+        Route::get('/reports/export', [VendorReportController::class, 'export'])->name('reports.export');
     });
 
     // User Routes

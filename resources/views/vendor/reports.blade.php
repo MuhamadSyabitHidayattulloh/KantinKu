@@ -5,21 +5,21 @@
     <!-- Sidebar -->
     <x-layout.sidebar subtitle="Vendor Panel">
         <x-layout.sidebar-group title="Menu Utama">
-            <x-layout.sidebar-item url="/vendor/dashboard" 
+            <x-layout.sidebar-item url="/vendor/dashboard"
                 icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-3m2-2l6-6m6 6l2 3m-2 3v6m0 0H9m12 0v-6m0 0l-2-3m2 3V6m0 0h-6"/></svg>'>
                 Dashboard
             </x-layout.sidebar-item>
-            
-            <x-layout.sidebar-item url="/vendor/products" 
+
+            <x-layout.sidebar-item url="/vendor/products"
                 icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m0 0v10l8 4"/></svg>'>
                 Kelola Produk
             </x-layout.sidebar-item>
-            
-            <x-layout.sidebar-item url="/vendor/orders" 
+
+            <x-layout.sidebar-item url="/vendor/orders"
                 icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>'>
                 Kelola Pesanan
             </x-layout.sidebar-item>
-            
+
             <x-layout.sidebar-item url="/vendor/reports" :active="request()->is('vendor/reports*')"
                 icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>'>
                 Laporan
@@ -27,11 +27,11 @@
         </x-layout.sidebar-group>
 
         <x-layout.sidebar-group title="Lainnya">
-            <x-layout.sidebar-item url="#" 
+            <x-layout.sidebar-item url="#"
                 icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>'>
                 Pengaturan
             </x-layout.sidebar-item>
-            
+
             <form action="{{ route('auth.logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100">
@@ -51,10 +51,10 @@
                     <option>Mingguan</option>
                     <option>Harian</option>
                 </select>
-                <x-buttons.btn variant="accent" size="sm">
+                <a href="{{ route('vendor.reports.export') }}" class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white bg-accent-500 hover:bg-accent-600 transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    Export
-                </x-buttons.btn>
+                    Export CSV
+                </a>
             </div>
         </x-layout.page-header>
 
@@ -62,20 +62,20 @@
         <div class="flex-1 p-8 overflow-auto">
             <!-- Summary Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <x-cards.stat-card 
+                <x-cards.stat-card
                     title="Total Pendapatan"
                     value="Rp {{ number_format($totalRevenue, 0, ',', '.') }}"
                     icon='<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
                     color="accent"
                 />
-                
-                <x-cards.stat-card 
+
+                <x-cards.stat-card
                     title="Total Pesanan"
                     value="{{ number_format($totalOrders) }}"
                     icon='<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>'
                     color="primary"
                 />
-                
+
 
             </div>
 
@@ -84,9 +84,9 @@
                 <div class="pb-4 border-b border-gray-200 mb-6">
                     <h3 class="font-poppins text-lg font-bold text-gray-800">Grafik Penjualan Bulanan</h3>
                 </div>
-                
-                <div class="h-64 bg-gradient-to-b from-accent-50 to-accent-100 rounded-lg flex items-center justify-center">
-                    <p class="text-gray-500 text-sm">Chart akan ditampilkan dengan data real</p>
+
+                <div class="h-64">
+                    <canvas id="vendorSalesChart"></canvas>
                 </div>
             </x-cards.card>
 
@@ -95,7 +95,7 @@
                 <div class="pb-4 border-b border-gray-200 mb-4">
                     <h3 class="font-poppins text-lg font-bold text-gray-800">Laporan Rinci Harian</h3>
                 </div>
-                
+
                 <x-tables.table>
                     <x-tables.thead>
                         <x-tables.tr>
@@ -126,4 +126,79 @@
         </div>
     </main>
 </div>
+
+@section('extra-js')
+<script>
+    // Prepare data for chart
+    const ordersByDate = @json($ordersByDate);
+    const dates = ordersByDate.map(d => new Date(d.date).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' }));
+    const orders = ordersByDate.map(d => d.count);
+    const revenues = ordersByDate.map(d => d.revenue);
+
+    // Initialize Vendor Sales Chart
+    const vendorCtx = document.getElementById('vendorSalesChart');
+    if (vendorCtx) {
+        new Chart(vendorCtx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [
+                    {
+                        label: 'Jumlah Pesanan',
+                        data: orders,
+                        borderColor: '#ffb430',
+                        backgroundColor: 'rgba(255, 180, 48, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        yAxisID: 'y',
+                    },
+                    {
+                        label: 'Total Penjualan (Rp)',
+                        data: revenues,
+                        borderColor: '#26b2a2',
+                        backgroundColor: 'rgba(38, 178, 162, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        yAxisID: 'y1',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Jumlah Pesanan'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Penjualan (Rp)'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                    },
+                }
+            }
+        });
+    }
+</script>
+@endsection
+
 @endsection
