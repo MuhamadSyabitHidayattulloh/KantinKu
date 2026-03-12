@@ -27,8 +27,12 @@ Route::middleware('guest')->group(function () {
         return view('auth.login');
     })->name('login');
 
+    // Route::get('/register', function () {
+    //     return view('auth.register');
+    // })->name('register');
+
     Route::get('/register', function () {
-        return view('auth.register');
+        abort(503, 'Registrasi ditutup sementara. Silakan hubungi admin untuk informasi lebih lanjut.');
     })->name('register');
 
     Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
