@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -48,6 +49,11 @@ class DatabaseSeeder extends Seeder
             ->count(1)
             ->for(User::where('email', 'vendor2@kantinku.com')->first(), 'vendor')
             ->create();
+
+        Wallet::create([
+            'user_id' => User::where('email', 'user@kantinku.com')->first()->id,
+            'balance' => 1000000,
+        ]);
 
         // Create Regular Users with Wallets
         // User::factory(10)->create()->each(function ($user) {
