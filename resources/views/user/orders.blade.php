@@ -41,7 +41,12 @@
     <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 bg-white">
         <div class="px-6 py-4 space-y-2">
             <a href="/user/explore" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">Jelajahi</a>
-            <a href="/user/cart" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">Keranjang</a>
+            <div class="relative">
+                <a href="/user/cart" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">Keranjang</a>
+                @if(count(session()->get('cart', [])) > 0)
+                    <span class="absolute top-1 right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ count(session()->get('cart', [])) }}</span>
+                @endif
+            </div>
             <a href="/user/orders" class="block px-4 py-2 rounded-lg text-primary-700 font-medium bg-primary-50 hover:bg-primary-100">Pesanan</a>
             <hr class="my-2">
             <div class="px-4 py-2">
@@ -119,6 +124,17 @@ function toggleMobileMenu() {
                         <div>
                             <h3 class="font-poppins font-bold text-lg text-gray-900">#{{ strtoupper($order->order_number) }}</h3>
                             <p class="text-sm text-gray-500">{{ $vendorNames }} • {{ $order->created_at->format('d M Y, H:i') }}</p>
+                            @if($order->pickup_time)
+                                <p class="text-sm text-gray-600 mt-1">
+                                    <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00-.293.707l-1.414 1.414a1 1 0 001.414 1.414L9 9.414V6z" clip-rule="evenodd"/></svg>
+                                    Waktu Pengambilan:
+                                    @if($order->pickup_time === 'break1')
+                                        <span class="font-semibold">Break 1 (09:30 - 09:45)</span>
+                                    @elseif($order->pickup_time === 'break2')
+                                        <span class="font-semibold">Break 2 (12:00 - 12:45)</span>
+                                    @endif
+                                </p>
+                            @endif
                         </div>
                         <span class="px-4 py-2 {{ $statusStyles[$order->getCalculatedStatus()] ?? 'bg-gray-100 text-gray-800' }} rounded-full text-sm font-semibold">
                             {{ $statusText[$order->getCalculatedStatus()] ?? ucfirst($order->getCalculatedStatus()) }}

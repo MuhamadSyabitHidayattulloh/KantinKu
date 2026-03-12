@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('order_number')->unique();
             $table->decimal('total_amount', 12, 2);
             $table->enum('status', ['pending', 'processing', 'ready', 'completed', 'cancelled'])->default('pending');
+            $table->string('pickup_time')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

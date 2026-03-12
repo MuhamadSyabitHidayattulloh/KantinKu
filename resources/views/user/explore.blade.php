@@ -39,7 +39,12 @@
     <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 bg-white">
         <div class="px-6 py-4 space-y-2">
             <a href="/user/explore" class="block px-4 py-2 rounded-lg text-primary-700 font-medium bg-primary-50 hover:bg-primary-100">Jelajahi</a>
-            <a href="/user/cart" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">Keranjang</a>
+            <div class="relative">
+                <a href="/user/cart" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">Keranjang</a>
+                @if(count(session()->get('cart', [])) > 0)
+                    <span class="absolute top-1 right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ count(session()->get('cart', [])) }}</span>
+                @endif
+            </div>
             <a href="/user/orders" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">Pesanan</a>
             <hr class="my-2">
             <div class="px-4 py-2">

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<x-toast />
 <!-- Top Navigation -->
 <nav class="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -39,7 +40,12 @@
     <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 bg-white">
         <div class="px-6 py-4 space-y-2">
             <a href="/user/explore" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">Jelajahi</a>
-            <a href="/user/cart" class="block px-4 py-2 rounded-lg text-primary-700 font-medium bg-primary-50 hover:bg-primary-100">Keranjang</a>
+            <div class="relative">
+                <a href="/user/cart" class="block px-4 py-2 rounded-lg text-primary-700 font-medium bg-primary-50 hover:bg-primary-100">Keranjang</a>
+                @if(count(session()->get('cart', [])) > 0)
+                    <span class="absolute top-1 right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ count(session()->get('cart', [])) }}</span>
+                @endif
+            </div>
             <a href="/user/orders" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">Pesanan</a>
             <hr class="my-2">
             <div class="px-4 py-2">
@@ -146,33 +152,31 @@ function toggleMobileMenu() {
                         <span class="font-poppins font-bold text-xl text-primary-700">Rp {{ number_format($total, 0, ',', '.') }}</span>
                     </div>
 
-                    <!-- Pickup Time Selection -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-900 mb-3">Waktu Pengambilan</label>
-                        <select class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-200 text-sm">
-                            <option value="">Pilih waktu pengambilan</option>
-                            <option value="break1">Break 1 (09.30 - 09.45)</option>
-                            <option value="break2">Break 2 (12.00 - 12.45)</option>
-                        </select>
-                    </div>
-
-                    <div class="space-y-3">
-                        <div class="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
-                            <svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <span class="text-sm text-blue-800">Saldo anda: <span class="font-semibold">Rp {{ number_format(auth()->user()->wallet->balance ?? 0, 0, ',', '.') }}</span></span>
+                    <form action="{{ route('user.cart.checkout') }}" method="POST" class="space-y-4">
+                        @csrf
+                        <!-- Pickup Time Selection -->
+                        <div>
+                            <label for="pickup_time" class="block text-sm font-semibold text-gray-900 mb-3">Waktu Pengambilan</label>
+                            <select id="pickup_time" name="pickup_time" required class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-200 text-sm @error('pickup_time') border-red-500 @enderror">
+                                <option value="">Pilih waktu pengambilan</option>
+                                <option value="break1" @if(old('pickup_time') === 'break1') selected @endif>Break 1 (09.30 - 09.45)</option>
+                                <option value="break2" @if(old('pickup_time') === 'break2') selected @endif>Break 2 (12.00 - 12.45)</option>
+                            </select>
+                            @error('pickup_time')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        <form action="{{ route('user.cart.checkout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="w-full py-3 bg-primary-700 text-white font-semibold rounded-lg hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed" {{ count($products) == 0 ? 'disabled' : '' }}>
-                                Pesan Sekarang
-                            </button>
-                        </form>
+                    <div class="space-y-3">
+                        <button type="submit" class="w-full py-3 bg-primary-700 text-white font-semibold rounded-lg hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed" {{ count($products) == 0 ? 'disabled' : '' }}>
+                            Pesan Sekarang
+                        </button>
 
                         <a href="/user/explore" class="block text-center w-full py-3 border-2 border-primary-700 text-primary-700 font-semibold rounded-lg hover:bg-primary-50 transition">
                             Lanjut Belanja
                         </a>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>

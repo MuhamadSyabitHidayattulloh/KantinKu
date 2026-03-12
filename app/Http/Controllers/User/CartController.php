@@ -87,10 +87,18 @@ class CartController extends Controller
 
     public function checkout(Request $request)
     {
+        // Validate pickup_time
+        $validated = $request->validate([
+            'pickup_time' => 'required|string|in:break1,break2',
+        ], [
+            'pickup_time.required' => 'Waktu pengambilan harus dipilih',
+            'pickup_time.in' => 'Waktu pengambilan tidak valid',
+        ]);
+
         $cart = session()->get('cart', []);
 
         if (empty($cart)) {
-            return back()->withErrors('Cart is empty');
+            return back()->with('error', 'Keranjang masih kosong');
         }
 
         $user = Auth::user();
@@ -102,7 +110,7 @@ class CartController extends Controller
             $product = Product::find($productId);
 
             if (!$product || $product->status !== 'available' || $product->stock < $quantity) {
-                return back()->withErrors("Product {$product->name} is not available with required quantity");
+                return back()->with('error', "Produk {$product->name} tidak tersedia dengan jumlah yang diminta");
             }
 
             $subtotal = $product->price * $quantity;
@@ -117,7 +125,7 @@ class CartController extends Controller
 
         // Check wallet balance
         if (!$user->wallet || !$user->wallet->hasEnoughBalance($totalAmount)) {
-            return back()->withErrors('Insufficient wallet balance');
+            return back()->with('error', 'Saldo dompet tidak cukup. Silakan lakukan top-up terlebih dahulu');
         }
 
         // Create order
@@ -126,6 +134,7 @@ class CartController extends Controller
             'order_number' => Order::generateOrderNumber(),
             'total_amount' => $totalAmount,
             'status' => 'pending',
+            'pickup_time' => $validated['pickup_time'],
         ]);
 
         // Create order details and reduce stock

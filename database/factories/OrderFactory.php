@@ -23,6 +23,7 @@ class OrderFactory extends Factory
             'order_number' => 'ORD-' . fake()->numerify('############'),
             'total_amount' => fake()->randomFloat(2, 50000, 1000000),
             'status' => 'completed',
+            'pickup_time' => fake()->randomElement(['break1', 'break2']),
         ];
     }
 

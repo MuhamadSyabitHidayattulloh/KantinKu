@@ -14,6 +14,7 @@ class Order extends Model
         'order_number',
         'total_amount',
         'status',
+        'pickup_time',
         'notes',
     ];
 
